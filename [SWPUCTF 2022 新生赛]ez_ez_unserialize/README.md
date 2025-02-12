@@ -1,5 +1,4 @@
-# WP
-题目是这样的一段代码  
+# 题目
 ```php
 <?php
 class X
@@ -27,6 +26,7 @@ if (isset($_REQUEST['x'])) {
     highlight_file(__FILE__);
 }
 ```
+# WP
 1. 题目已经说明flag的位置，wakeup函数会在反序列化前调用，会将类内部的x的值修改为当前路径，在类销毁时会显示路径x，hilight_file会显示路径文件的内容，所以要传入x的值为flag的位置，并且要绕过wake。
 2. 构造出需要的x，并且将其序列化
 ![alt text](image.png)  
