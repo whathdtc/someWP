@@ -4,3 +4,5 @@
 ![alt text](image.png)  
 3. 上传之后发现文件保存在./upload/路径下，可以找到上传的php文件的位置是/upload/hello.php
 ![alt text](image-1.png)
+4. 访问后搜索flag  
+![alt text](image-2.png)  
